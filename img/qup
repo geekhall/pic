@@ -1,0 +1,29 @@
+###################################################
+# filename : qup
+# function : upload file to qiniu cloud .
+# usage    : qup remotefilename localfilename
+###################################################
+
+usage()
+{
+    echo " Usage :"
+    echo "       qup remotefilename localfilename "
+    echo ""
+    exit -1
+}
+
+if [ $# -ne 2 ];then
+    echo "parameter error"
+    usage
+fi
+
+workdir=`pwd`
+localfile=$2
+if [ ! -f $workdir/$localfile ];then
+    echo "Local file not exists. please check again."
+    exit -1
+fi
+dt=`date +'%Y%m%d_%H%M%S'`
+echo $dt
+
+qshell fput moonwhite img/$dt_$1 $2 

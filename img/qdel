@@ -1,0 +1,29 @@
+###################################################
+# filename : qdel
+# function : delete file from qiniu cloud .
+# usage    : qdel remotefilename 
+###################################################
+
+usage()
+{
+    echo " Usage :"
+    echo "       qdel remotefilename "
+    echo ""
+    exit -1
+}
+
+if [ $# -ne 1 ];then
+    echo "parameter error"
+    usage
+fi
+
+workdir=`pwd`
+remotefile=img/$1
+
+qshell stat moonwhite $remotefile
+if [ $? -ne 0 ]; then
+	echo "Remote file not exists. please check again."
+	usage
+else
+	qshell delete moonwhite $remotefile
+fi

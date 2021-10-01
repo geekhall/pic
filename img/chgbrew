@@ -1,0 +1,82 @@
+usage()
+{
+	echo " Usage :"
+	echo "     chgbrew offi : change the source to official source. # 官方源"
+	echo "     chgbrew qh   : change the source to tsinghua source. # 清华"
+	echo "     chgbrew zkd  : change the source to ustc source.     # 中科大"
+	exit -1;
+}
+if [ $# != 1 ];then
+	echo "parameter count error "
+	usage;
+fi
+
+if [ $1 != "offi" -a $1 != "qh" -a $1 != "zkd" ];then
+	echo "parameter error."
+	usage
+fi
+
+dt=`date +"%Y%m%d_%H%M%S"`
+
+cd "$(brew --repo)"
+if [ ! -f chgbrew.log ]; then
+	touch chgbrew.log
+fi
+echo $dt >> chgbrew.log
+if [ $1 == "qh" ];then
+	# 清华大学:
+	echo "changing the source of brew to tsinghua"
+	echo "changing the source of brew to tsinghua" >> chgbrew.log
+	# 替换brew.git:
+	cd "$(brew --repo)"
+	git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
+
+	# 替换homebrew-core.git:
+	cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+	git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git
+
+	unset https_proxy
+	unset http_proxy
+	unset all_proxy
+	brew update
+
+elif [ $1 == "zkd" ];then
+	echo "changing the source of brew to ustc" 
+	echo "changing the source of brew to ustc"  >> chgbrew.log
+
+	# 替换 brew.git
+	cd "$(brew --repo)"
+	git remote set-url origin https://mirrors.ustc.edu.cn/brew.git
+
+	# 替换homebrew-core.git:
+	cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+	git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
+	
+	unset https_proxy
+	unset http_proxy
+	unset all_proxy
+	brew update
+
+elif [ $1 == "offi" ];then
+	echo "changing the source of brew to official"
+	echo "changing the source of brew to official" >> chgbrew.log
+
+	# 恢复官方源
+	cd "$(brew --repo)"
+	git remote set-url origin https://github.com/Homebrew/brew.git
+	
+	# 重置homebrew-core.git:
+	cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+	git remote set-url origin https://github.com/Homebrew/homebrew-core.git
+
+	export https_proxy=http://127.0.0.1:7890
+	export http_proxy=http://127.0.0.1:7890
+	export all_proxy=socks5://127.0.0.1:7891
+	brew update
+fi
+
+cd "$(brew --repo)"
+git remote get-url origin
+
+
+
