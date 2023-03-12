@@ -24,12 +24,10 @@ fi
 # copy file
 ###############
 
-git pull github main
-git pull gitee main
+git pull origin main
 git add .
 git commit -m "$comment"
-git push github main
-git push gitee main
+git push origin main
 echo "commit ok"
 
 #/usr/local/bin/python3 /Users/yiny/bin/deploy.py
